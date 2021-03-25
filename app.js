@@ -39,7 +39,7 @@ app.get('/status', (req, res) => {
         if (error) throw new Error(error);
         templates_diff = templates_comperator.compare_templates(response.body);
 
-        res.send("Added templates: " + templates_diff.added_templates + "\n" +
+        res.send("<h1>Added templates: " + templates_diff.added_templates + "</h1>" +
                 "Removed templates: " + templates_diff.removed_templates + "\n" +
                 "Updated templates: " + templates_diff.updated_templates + "\n" + 
                 "Snapshot time: " + templates_diff.snapshot_date
