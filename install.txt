@@ -3,3 +3,7 @@ npm init
 
 # install express
 npm install express --save
+
+
+# install AAD auth
+npm install adal-node
