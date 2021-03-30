@@ -1,12 +1,25 @@
 const express = require('express')
 const app = express()
 const port = 3000
-const https = require('https');
 var request = require('request');
-var storage = require('./storage');
 var aad_auth = require('./aad-auth')
 
 var templates_comperator = require('./templates_comperator');
+
+var print_message = function (templates_diff, prefix, attribute) {
+    let attribure_str = '';
+    if(templates_diff[attribute].length>0){
+        attribure_str = prefix + ": ";
+        templates_diff[attribute].forEach(element => {
+            attribure_str+=("\""+ element.name + "\"[ID: "+ element.id + ", lastUpdatedDateUTC: " + element.lastUpdatedDateUTC + "] ,");
+        });
+        attribure_str.slice(0, -1);
+        attribure_str+= "."
+    }
+    
+    return attribure_str;
+}
+
 
 
 app.get('/templates_status', (req, res) => {
@@ -21,13 +34,28 @@ app.get('/templates_status', (req, res) => {
           request(options, function (error, response) {
             if (error) throw new Error(error);
             templates_diff = templates_comperator.compare_templates(response.body);
-    
-            res.send(templates_diff)
+            templates_diff_json = {
+                added_templates: {
+                    arr: templates_diff.added_templates,
+                    str: print_message(templates_diff, 'Added', 'added_templates')
+                },
+                updated_templates: {
+                    arr: templates_diff.updated_templates,
+                    str: print_message(templates_diff, 'Updated', 'updated_templates')
+                },
+                removed_templates: {
+                    arr: templates_diff.removed_templates,
+                    str: print_message(templates_diff, 'Removed', 'removed_templates')
+                }
+            }
+
+            res.send(templates_diff_json)
           });
     }
     aad_auth.get_aad_token(on_token_aquire);
-   
 })
+
+
 
 app.get('/status', (req, res) => {
     var on_token_aquire = function(auth_token) {
