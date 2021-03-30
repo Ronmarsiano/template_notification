@@ -13,7 +13,7 @@ var print_message = function (templates_diff, prefix, attribute) {
         templates_diff[attribute].forEach(element => {
             attribure_str+=("\""+ element.name + "\"[ID: "+ element.id + ", lastUpdatedDateUTC: " + element.lastUpdatedDateUTC + "] ,");
         });
-        attribure_str.slice(0, attribure_str.length -1);
+        attribure_str = attribure_str.slice(0, attribure_str.length -1);
         attribure_str+= "."
     }
     

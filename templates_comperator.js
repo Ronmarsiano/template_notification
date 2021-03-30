@@ -31,6 +31,12 @@ module.exports = {
             return get_templates_diff(api_templates, storage_templates);
         }
 
+        /**
+         * 
+         * @param {*} api_templates - templates from the storage
+         * @param {*} storage_templates - templaes from the API
+         * @returns an array of templates that were added
+         */
         var get_removed_templates = function(api_templates, storage_templates){
             return get_templates_diff(storage_templates, api_templates);
         }
@@ -45,7 +51,7 @@ module.exports = {
             let added_templates = [];
             let src_templates_keys = Object.keys(src_templates);
             src_templates_keys.forEach(src_single_key => {
-                if(dst_templates[src_single_key] == undefined){
+                if(src_single_key!= 'snapshot_time' && dst_templates[src_single_key] == undefined){
                     added_templates.push(src_templates[src_single_key]);
                 }
             });
@@ -78,8 +84,9 @@ module.exports = {
         let storage_templates = storage.get_templates();
         let api_templates = parse_templates(api_templates_str);
         let updated_templates = get_updated_templates(api_templates, storage_templates);
-        let added_templates = get_added_templates(api_templates, storage_templates);
         let removed_templates = get_removed_templates(api_templates, storage_templates);
+        let added_templates = get_added_templates(api_templates, storage_templates);
+        
 
         storage.save_templates(api_templates);
 
