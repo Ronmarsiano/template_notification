@@ -16,7 +16,7 @@ var print_message = function (templates_diff, prefix, attribute) {
         attribure_str = attribure_str.slice(0, attribure_str.length -1);
         attribure_str+= "."
     }
-    
+
     return attribure_str;
 }
 

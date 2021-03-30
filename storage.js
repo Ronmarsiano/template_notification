@@ -7,6 +7,7 @@ module.exports = {
             fs.writeFile('templates.json', JSON.stringify(templates), function (err) {
                 if (err) return console.log(err);
               });
+              console.log("Snapshot saved "+ templates.snapshot_time)
         }
         else{
             console.log("Should not save now - " + templates.snapshot_time + " snapshot - " + this.get_templates().snapshot_time+ " Diff = " +(templates.snapshot_time - this.get_templates().snapshot_time))
