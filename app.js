@@ -20,6 +20,23 @@ var print_message = function (templates_diff, prefix, attribute) {
     return attribure_str;
 }
 
+var print_message_html = function (templates_diff, prefix, attribute) {
+    let attribute_str = '';
+    let tab_space_str = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    let counter = 0;
+    if(templates_diff[attribute].length>0){
+        attribute_str = "" + tab_space_str;
+        templates_diff[attribute].forEach(element => {
+            attribute_str+=("\""+ element.name + "\"<sub><em>[ID: "+ element.id + ", lastUpdatedDateUTC: " + element.lastUpdatedDateUTC + "]</em></sub><br>" + tab_space_str);
+            counter ++;
+        });
+        attribute_str = attribute_str.slice(0, attribute_str.length -1);
+        attribute_str += ("<br>"+ tab_space_str + "<b>Total: " + counter + "templates.</b>");
+    }
+
+    return attribute_str;
+}
+
 
 
 app.get('/templates_status', (req, res) => {
@@ -75,12 +92,13 @@ app.get('/status', (req, res) => {
           request(options, function (error, response) {
             if (error) throw new Error(error);
             templates_diff = templates_comperator.compare_templates(response.body);
+
+            var html_message = "<h4>This is an automatic message provding the analytic rule template deployment status for the last 7 days.</h4><br>";
+            html_message += templates_diff.added_templates.length >0? ("<p><b>Added templates:</b><br>" + print_message_html(templates_diff, 'Added', 'added_templates') + "</p><br>"):""
+            html_message += templates_diff.removed_templates.length >0? ("<p><b>Removed templates:</b><br>" + print_message_html(templates_diff, 'Removed', 'removed_templates') + "</p><br>"):""
+            html_message += templates_diff.updated_templates.length >0? ("<p><b>Updated templates:</b><br>" + print_message_html(templates_diff, 'Updated', 'updated_templates') + "</p><br>"):""
     
-            res.send("<p>Added templates: " + templates_diff.added_templates + "</p>" +
-                    "<p>Removed templates: " + templates_diff.removed_templates + "</p>" +
-                    "<p>Updated templates: " + templates_diff.updated_templates + "</p>" + 
-                    "<p>Snapshot time: " + templates_diff.snapshot_date + "</p>"
-            )
+            res.send(html_message)
           });
     }
     aad_auth.get_aad_token(on_token_aquire);
